@@ -43,7 +43,17 @@ api.post('/', (req, res, next) => {
 
 //update a campus
 api.put('/:id', (req, res) => {
-
+    Campus.findById(req.params.id)
+    .then( campus => {
+        if(!campus) res.sendStatus(404);
+        else return campus.update({ name: req.body.name, image: req.body.image });
+    })
+    .then(() =>{
+        res.sendStatus(200);
+    })
+    .catch( err => {
+        res.status(err.status).send(err.message);
+    })
 });
 
 

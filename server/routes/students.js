@@ -38,7 +38,7 @@ api.get('/:id', (req, res, next) => {
 //create a new student
 api.post('/', (req, res, next) => {
     Promise.all([
-        Campus.findById(req.body.id),
+        Campus.findById(req.body.campusId),
         User.create({first_name: req.body.firstName, last_name: req.body.lastName, email: req.body.email})
     ])
     .spread((campus, user) => {
@@ -52,6 +52,25 @@ api.post('/', (req, res, next) => {
 
 //update a student
 api.put('/:id', (req, res) => {
+    Promise.all([
+        Campus.findById(req.body.campusId),
+        User.findById(req.params.id)
+    ])
+    .spread((campus, user) => {
+        user.update({first_name: req.body.firstName, last_name: req.body.lastName, email: req.body.email})
+        .then( user =>{
+            return user.setCampus(campus)
+        })
+        .then( () =>{
+            res.sendStatus(200);
+        })
+        .catch( err =>{
+            res.status(err.status).send(err.message);
+        });
+    })
+    .catch(err => {
+        res.send(err.message);
+    });
 
 });
 
