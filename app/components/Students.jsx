@@ -9,10 +9,22 @@ class Students extends Component {
     }
 
     render(){
+      console.log("props", this.props)
         return (
-                  <h1>Students</h1>
+                <div>
+                {
+                  this.props.students.length ?
+                  this.props.students.map(el => {
+                    return <h1>{el.first_name}</h1>
+                   })
+                    :  <div class="progress">
+                        <div class="indeterminate"></div>
+                      </div>
 
-            );
+                }
+                </div>
+
+            )
 
     }
 

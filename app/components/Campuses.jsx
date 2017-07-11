@@ -9,7 +9,7 @@ class Campuses extends Component {
       }
     render(){
         return (
-                 <h1>Campuses</h1>
+                <h1>Campuses</h1>
 
             );
 
