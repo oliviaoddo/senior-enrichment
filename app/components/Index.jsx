@@ -4,9 +4,18 @@ import Students from './Students';
 import Campuses from './Campuses';
 import Navigation from './Navigation';
 import Home from './Home';
+import store, { fetchStudents, fetchCampuses } from "../store";
+
 
 
 export default class Main extends Component{
+    componentDidMount () {
+        const studentsThunk = fetchStudents();
+        const campusesThunk = fetchCampuses();
+        store.dispatch(studentsThunk);
+        store.dispatch(campusesThunk);
+    }
+
     render(){
         return(
                 <Router>
