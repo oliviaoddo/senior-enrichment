@@ -43,7 +43,7 @@ api.post('/', (req, res, next) => {
     ])
     .spread((campus, user) => {
         user.setCampus(campus)
-        res.sendStatus(200);
+        res.json(user);
     })
     .catch(err => {
         res.send(err.message);

@@ -1,18 +1,19 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Route, Switch, Link } from 'react-router-dom';
 import { connect } from "react-redux";
 
 function Students(props) {
-      console.log("props", props)
       return (
+              <div>
               <div className='container'>
               <h1>Students</h1>
-               <table>
+               <table className='striped responsive-table'>
                   <thead>
                     <tr>
                         <th>Full Name</th>
                         <th>Email</th>
                         <th>Campus</th>
+                        <th></th>
                     </tr>
                   </thead>
 
@@ -25,6 +26,7 @@ function Students(props) {
                                     <td>{student.first_name} {student.last_name}</td>
                                     <td>{student.email}</td>
                                     <td>{props.campuses.filter(campus => campus.id === student.campusId)[0].name}</td>
+                                    <td><Link to={`student/${student.id}`}><i className="material-icons">visibility</i></Link></td>
                                   </tr>
                                 )
                         })
@@ -33,6 +35,7 @@ function Students(props) {
                     }
                   </tbody>
                 </table>
+              </div>
               </div>
           )
 

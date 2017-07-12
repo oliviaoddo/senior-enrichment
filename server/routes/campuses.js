@@ -34,7 +34,7 @@ api.get('/:id', (req, res, next) => {
 api.post('/', (req, res, next) => {
     Campus.create({name: req.body.name, image: req.body.image})
     .then(campus => {
-        res.sendStatus(200);
+        res.json(campus);
     })
     .catch(err => {
         res.send(err.message);
@@ -48,8 +48,8 @@ api.put('/:id', (req, res) => {
         if(!campus) res.sendStatus(404);
         else return campus.update({ name: req.body.name, image: req.body.image });
     })
-    .then(() =>{
-        res.sendStatus(200);
+    .then((campus) =>{
+        res.json(campus);
     })
     .catch( err => {
         res.status(err.status).send(err.message);

@@ -3,6 +3,8 @@ import { HashRouter as Router, Route, Switch, Link } from 'react-router-dom';
 import Students from './Students';
 import Campuses from './Campuses';
 import Navigation from './Navigation';
+import SingleCampus from './SingleCampus';
+import SingleStudent from './SingleStudent';
 import Home from './Home';
 import store, { fetchStudents, fetchCampuses } from "../store";
 
@@ -25,6 +27,8 @@ export default class Main extends Component{
                         <Route exact path={`/`} component={Home} />
                         <Route exact path={`/students`} component={Students} />
                         <Route exact path={`/campuses`} component={Campuses} />
+                        <Route exact path={`/student/:id`} component={SingleStudent} />
+                        <Route exact path={`/campus/:id`} component={SingleCampus} />
                     </Switch>
                     </div>
                 </Router>
