@@ -8,7 +8,7 @@ function Campuses(props) {
     <div className="container">
     <h1>Campuses</h1>
     <div className="row">
-    <form className="col s12 right-align" onSubmit={props.handleSubmit} >
+    <form className="col s12 right-align" encType="multipart/form-data" action="/images" onSubmit={props.handleSubmit} >
      <div className="input-field inline">
             <input name="campusName"onChange={props.handleChange} value={props.newEntry} id="campus-name" placeholder="Campus Name"/>
     </div>
