@@ -86,6 +86,14 @@ class SingleCampus extends Component{
                                     </thead>
 
                                     <tbody>
+                                    <tr>
+
+                                            <td><input value={this.state.firstName} name="firstName" onChange={this.changeFname}></input></td>
+                                            <td><input value={this.state.lastName} name="lastName" onChange={this.changeLname} ></input></td>
+                                            <td><input value={this.state.email} name="email" onChange={this.changeEmail} ></input></td>
+                                            <td><button type="submit" className="btn-floating btn-small waves-effect waves-light teal"><i className='material-icons'>add</i></button></td>
+
+                                    </tr>
                                     {
                                         this.props.students.filter(student => student.campusId === this.props.campus.id)
                                         .map(student => {
@@ -99,14 +107,6 @@ class SingleCampus extends Component{
                                                     )
                                         })
                                     }
-                                    <tr>
-
-                                            <td><input value={this.state.firstName} name="firstName" onChange={this.changeFname}></input></td>
-                                            <td><input value={this.state.lastName} name="lastName" onChange={this.changeLname} ></input></td>
-                                            <td><input value={this.state.email} name="email" onChange={this.changeEmail} ></input></td>
-                                            <td><button type="submit" className="btn-floating btn-small waves-effect waves-light teal"><i className='material-icons'>add</i></button></td>
-
-                                    </tr>
                                     </tbody>
                                   </table>
                                 </form>
