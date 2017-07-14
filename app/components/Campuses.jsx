@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Route, Switch, Link } from 'react-router-dom';
 import { connect } from "react-redux";
-import { changeCampus, postCampus } from '../store'
+import { changeCampus, postCampus } from '../redux/campuses'
 
 class Campuses extends Component{
   constructor(props) {
@@ -64,7 +64,7 @@ class Campuses extends Component{
         <input onChange={(event)=>this.setState({imageEntry: event.target.value.slice(12)})} id="campus-image" name="image" type="file" required/>
       </div>
       <div className="file-path-wrapper">
-        <input className="file-path validate" type="text" value={this.state.imageEntry}/>
+        <input placeholder="Photo" className="file-path validate" type="text" value={this.state.imageEntry}/>
       </div>
     </div>
     <div className="input-field inline">
@@ -111,7 +111,7 @@ class Campuses extends Component{
 }
 
 const mapStateToProps = state => ({
-  campuses: state.campuses
+  campuses: state.campuses.campuses
 });
 
 const mapDispatchToProps = dispatch => ({

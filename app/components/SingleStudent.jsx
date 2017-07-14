@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { fetchStudent, updateStudent, deleteStudent } from '../store';
+import { fetchStudent, updateStudent, deleteStudent } from '../redux/students';
 import { connect } from 'react-redux';
 import {Input} from 'react-materialize'
 
@@ -15,21 +15,24 @@ class SingleStudent extends Component{
       selectedCampus: ''
     }
   }
-    componentDidMount() {
-        const studentId = this.props.match.params.id
-        this.props.fetchStudent(studentId)
-        .then(() =>{
-          console.log("props in promise", this.props)
-          this.setState({
-            firstName: this.props.student.first_name,
-            lastName: this.props.student.last_name,
-            email: this.props.student.email,
-            selectedCampus: this.props.student.campusId
-           })
-        })
-        console.log("props in mount", this.props);
+  componentDidMount() {
+      const studentId = this.props.match.params.id
+      console.log("the student ID", studentId);
+      this.props.fetchStudent(studentId)
+      .then(() =>{
+        console.log("props in promise", this.props)
+        this.setState({
+          firstName: this.props.student.first_name,
+          lastName: this.props.student.last_name,
+          email: this.props.student.email,
+          selectedCampus: this.props.student.campusId
+         })
+      })
+      console.log("props in mount", this.props);
     }
     render(){
+        console.log("the student", this.props.student);
+        console.log("the props", this.props);
         return (
                     <div className='container'>
                         <div className="row">
@@ -93,19 +96,26 @@ class SingleStudent extends Component{
                                 })
                             }
                         </div>
-
-
                     </div>
+
                 )
     }
 }
 
 
-const mapStateToProps = (state) => ({
-  campuses: state.campuses,
-  student: state.student
+// const mapStateToProps = (state) => ({
+//   campuses: state.campuses,
+//   student: state.student
 
-})
+// })
+
+const mapStateToProps = (state) => {
+    console.log("checking state", state);
+    return {
+      campuses: state.campuses.campuses,
+      student: state.students.student}
+
+}
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
   fetchStudent: (studentId) => dispatch(fetchStudent(studentId)),

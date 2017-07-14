@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Route, Switch, Link } from 'react-router-dom';
 import { connect } from "react-redux";
 import {Input} from 'react-materialize'
-import { postStudent, deleteStudent } from '../store';
+import { postStudent, deleteStudent } from '../redux/students';
 
 class Students extends Component {
   constructor(props) {
@@ -75,7 +75,7 @@ class Students extends Component {
                     { !this.state.searchValue ?
                       <tr>
 
-                              <td><input value={this.state.firstName} placeholder="Add a Student" name="firstName" onChange={(event) => this.setState({firstName: event.target.value} )} required></input></td>
+                              <td><input value={this.state.firstName} placeholder="Add a Student" name="firstName" onChange={(event) => this.setState({firstName: event.target.value})} required></input></td>
                               <td><input value={this.state.lastName} name="lastName" onChange={(event) => this.setState({lastName: event.target.value })} required></input></td>
                               <td><input value={this.state.email} name="email" onChange={(event) => this.setState({email: event.target.value} )}  type="email" required></input></td>
                               <td>
@@ -96,7 +96,7 @@ class Students extends Component {
                       : null
                     }
                       {
-                        this.props.campuses.length ?
+                        this.props.students.length ?
                         students.map(student => {
                         return (
                                   <tr key={student.id}>
@@ -135,8 +135,8 @@ class Students extends Component {
 }
 
 const mapStateToProps = state => ({
-  students: state.students,
-  campuses: state.campuses
+  students: state.students.students,
+  campuses: state.campuses.campuses
 });
 
 const mapDispatchToProps = (dispatch,ownProps) => ({

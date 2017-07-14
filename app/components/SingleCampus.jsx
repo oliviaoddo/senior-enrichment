@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import { connect } from "react-redux";
-import { fetchCampus, postStudent, changeCampus, updateCampus, deleteCampus, deleteStudent } from '../store';
+import { postStudent, deleteStudent } from '../redux/students';
+import { fetchCampus, changeCampus, updateCampus, deleteCampus } from '../redux/campuses';
 
 class SingleCampus extends Component{
     constructor(props) {
@@ -162,9 +163,8 @@ class SingleCampus extends Component{
 }
 
 const mapStateToProps = (state) => ({
-  students: state.students,
-  campus: state.campus,
-  newEntry: state.newCampusEntry
+  students: state.students.students,
+  campus: state.campuses.campus
 
 })
 

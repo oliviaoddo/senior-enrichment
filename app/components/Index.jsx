@@ -7,7 +7,9 @@ import Footer from './Footer';
 import SingleCampus from './SingleCampus';
 import SingleStudent from './SingleStudent';
 import Home from './Home';
-import store, { fetchStudents, fetchCampuses } from "../store";
+import store from "../store";
+import { fetchStudents } from '../redux/students'
+import { fetchCampuses } from '../redux/campuses'
 
 
 
