@@ -5,7 +5,9 @@ export default class Home extends Component {
         return(
                <div className="home-image">
                     <img id="home-img" src="home-image.jpg"></img>
-                    <h1 className="center-align white-text" id="home-text">MHI Academy of JavaScript</h1>
+
+                    <h1 className="card center-align white-text" id="home-text">MHI Academy of JavaScript</h1>
+
                 </div>
 
                )

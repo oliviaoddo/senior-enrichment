@@ -9,8 +9,12 @@ module.exports = db.define('campus', {
 }, {
   hooks: {
     beforeDestroy: function(campus){
-      Student.update({campusId: null}, {where: {campusId: campus.id}});
+      Student.destory({where: {campusId: campus.id}});
         }
     }
 }
 );
+
+
+    //ideally a student should be assigned to a different campus before deleting the campus in order to keep their information in the database
+    //setting their campusId to null before destroying the campus breaks the frontend
