@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Route, Switch, Link } from 'react-router-dom';
 import { connect } from "react-redux";
 import {Input} from 'react-materialize'
-import { postStudent } from '../store';
+import { postStudent, deleteStudent } from '../store';
 
 class Students extends Component {
   constructor(props) {
@@ -17,6 +17,7 @@ class Students extends Component {
     }
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleDelete = this.handleDelete.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -66,6 +67,7 @@ class Students extends Component {
                         <th>Email</th>
                         <th>Campus</th>
                         <th></th>
+                        <th></th>
                     </tr>
                   </thead>
 
@@ -75,9 +77,9 @@ class Students extends Component {
 
                               <td><input value={this.state.firstName} placeholder="Add a Student" name="firstName" onChange={(event) => this.setState({firstName: event.target.value} )} required></input></td>
                               <td><input value={this.state.lastName} name="lastName" onChange={(event) => this.setState({lastName: event.target.value })} required></input></td>
-                              <td><input value={this.state.email} name="email" onChange={(event) => this.setState({email: event.target.value} )} required type="email"></input></td>
+                              <td><input value={this.state.email} name="email" onChange={(event) => this.setState({email: event.target.value} )}  type="email" required></input></td>
                               <td>
-                                  <Input s={10} type='select' defaultValue='' name="campusType">
+                                  <Input s={10} type='select' defaultValue='' name="campusType" required>
                                    <option value="" disabled>Select a Campus</option>
                                      {
                                       this.props.campuses.map(campus => {
@@ -88,6 +90,7 @@ class Students extends Component {
 
                               </td>
                               <td><button type="submit" className="btn-floating btn-small waves-effect waves-light teal"><i className='material-icons'>add</i></button></td>
+                              <td></td>
 
                       </tr>
                       : null
@@ -102,6 +105,7 @@ class Students extends Component {
                                     <td>{student.email}</td>
                                     <td>{this.props.campuses.filter(campus => campus.id === student.campusId)[0].name}</td>
                                     <td><Link to={`student/${student.id}`}><i className="material-icons">visibility</i></Link></td>
+                                    <td><i id={student.id} onClick={this.handleDelete} className="fa fa-times-circle fa-lg icon-delete" aria-hidden="true"></i></td>
                                   </tr>
                                 )
                         })
@@ -113,6 +117,11 @@ class Students extends Component {
                 </form>
               </div>
           )
+    }
+
+    handleDelete(event){
+        console.log(event.target.id)
+        this.props.removeStudent(event.target.id);
     }
 
     handleSubmit(event){
@@ -131,8 +140,9 @@ const mapStateToProps = state => ({
   campuses: state.campuses
 });
 
-const mapDispatchToProps = dispatch => ({
-  submitStudent: (student) => dispatch(postStudent(student))
+const mapDispatchToProps = (dispatch,ownProps) => ({
+  submitStudent: (student) => dispatch(postStudent(student)),
+  removeStudent: (id) => dispatch(deleteStudent(id, ownProps.history))
 })
 
 

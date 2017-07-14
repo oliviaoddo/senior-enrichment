@@ -39,10 +39,10 @@ class SingleStudent extends Component{
                                 <label>Edit</label>
                                 <form onSubmit={this.props.handleSubmit} className="col s12" >
                                  <div className="input-field inline">
-                                        <input onChange={(event) => this.setState({firstName: event.target.value})} name="firstName" value={this.state.firstName}/>
+                                        <input onChange={(event) => this.setState({firstName: event.target.value})} name="firstName" value={this.state.firstName.charAt(0).toUpperCase() + this.state.firstName.slice(1)}/>
                                 </div>
                                 <div className="input-field inline">
-                                        <input onChange={(event) => this.setState({lastName: event.target.value})} name="lastName" value={this.state.lastName}/>
+                                        <input onChange={(event) => this.setState({lastName: event.target.value})} name="lastName" value={this.state.lastName.charAt(0).toUpperCase() + this.state.lastName.slice(1)}/>
                                 </div>
                                 <div className="input-field inline">
                                         <input onChange={(event) => this.setState({email: event.target.value})} name="email"value={this.state.email}/>
@@ -100,8 +100,10 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch, ownProps) => ({
   fetchStudent: (studentId) => dispatch(fetchStudent(studentId)),
   handleSubmit(event){
+    const fnameInput = event.target.firstName.value
+    const lnameInput = event.target.lastName.value
     event.preventDefault()
-    dispatch(updateStudent({firstName: event.target.firstName.value , lastName: event.target.lastName.value, email: event.target.email.value, campusId: event.target.campusType.value}, ownProps.match.params.id))
+    dispatch(updateStudent({firstName: fnameInput.charAt(0).toUpperCase() + fnameInput.slice(1) , lastName: lnameInput.charAt(0).toUpperCase() + lnameInput.slice(1), email: event.target.email.value, campusId: event.target.campusType.value}, ownProps.match.params.id))
   },
   removeStudent(event){
     event.preventDefault();
