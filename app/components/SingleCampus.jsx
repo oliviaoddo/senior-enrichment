@@ -17,6 +17,7 @@ class SingleCampus extends Component{
         }
         this.onStudentSubmit = this.onStudentSubmit.bind(this);
         this.handleChange = this.handleChange.bind(this);
+        this.onSubmitCampus = this.onSubmitCampus.bind(this);
     }
 
     handleChange(event){
@@ -50,13 +51,13 @@ class SingleCampus extends Component{
                             <div className="col m5">
                                   <div className="card">
                                     <div className="card-image waves-effect waves-block waves-light">
-                                      <img className="activator" src="http://www.everythinglongbeach.com/wp-content/uploads/2014/01/csulb.jpg"></img>
+                                      <img className="activator" src={`/images/${this.props.campus.image}`}></img>
                                     </div>
                                   </div>
                             </div>
                             <div className="col m7">
                             <div className="row">
-                            <form className="col s12 right-align" id="edit-form" onSubmit={this.props.editCampus} >
+                            <form className="col s12 right-align" encType="multipart/form-data" id="edit-form" onSubmit={this.onSubmitCampus}>
                             <label htmlFor="edit-form">Edit</label>
                              <div className="input-field inline">
                                     <input name="campusName"onChange={(event) => this.setState({campusEntry: event.target.value})} id="campus-name" value={this.state.campusEntry} required/>
@@ -64,7 +65,7 @@ class SingleCampus extends Component{
                             <div className="file-field input-field inline">
                               <div className="btn">
                                 <span>File</span>
-                                <input type="file"/>
+                                <input id="campus-image" name="file" type="file"/>
                               </div>
                               <div className="file-path-wrapper">
                                 <input className="file-path validate" value={this.props.campus.image} type="text"/>
@@ -134,6 +135,18 @@ class SingleCampus extends Component{
     event.preventDefault();
     this.props.handleSubmit({firstName: event.target.firstName.value, lastName: event.target.lastName.value, email: event.target.email.value, campusId: this.props.match.params.id})
     this.setState({firstName: '', lastName: '', email: ''});
+
+
+  }
+
+  onSubmitCampus(event){
+      event.preventDefault();
+      const formData = new FormData();
+      const fileInput = document.getElementById('campus-image');
+      formData.append('campusName', event.target.campusName.value);
+      console.log("file input in the on submit", fileInput.files[0]);
+      if(fileInput.files[0]) formData.append('image', fileInput.files[0]);
+      this.props.editCampus(formData);
   }
 }
 
@@ -147,10 +160,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch, ownProps) => ({
   fetchCampus: () => dispatch(fetchCampus(ownProps.match.params.id)),
   handleSubmit: (student) => dispatch(postStudent(student)),
-  editCampus(event){
-      event.preventDefault();
-       dispatch(updateCampus({name: event.target.campusName.value, image: 'img.jpg'}, ownProps.match.params.id));
-  },
+  editCampus: (data) => dispatch(updateCampus(data,ownProps.match.params.id )),
     removeCampus(event){
       event.preventDefault();
        dispatch(deleteCampus(ownProps.match.params.id, ownProps.history));

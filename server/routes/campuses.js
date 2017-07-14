@@ -3,6 +3,19 @@ const api = require('express').Router()
 const db = require('../../db')
 var Promise = require('bluebird');
 const  { Campus } = require('../../db/models');
+const {resolve} = require('path')
+const multer = require('multer');
+// const upload = multer({ dest: resolve(__dirname, '../../public', 'image')})
+
+
+const storage = multer.diskStorage({
+  destination: resolve(__dirname, '../../public', 'images'),
+  filename: function (req, file, cb) {
+    cb(null, file.fieldname + '-' + Date.now())
+  }
+});
+
+var upload = multer({ storage: storage })
 
 
 //get all of the campuses
@@ -31,8 +44,10 @@ api.get('/:id', (req, res, next) => {
 
 
 //create a new campus
-api.post('/', (req, res, next) => {
-    Campus.create({name: req.body.name, image: req.body.image})
+api.post('/', upload.single('image'), (req, res, next) => {
+    console.log("body", req.body);
+    console.log("file", req.file);
+    Campus.create({name: req.body.campusName, image: req.file.filename})
     .then(campus => {
         res.json(campus);
     })
@@ -41,12 +56,16 @@ api.post('/', (req, res, next) => {
     });
 });
 
-//update a campus
-api.put('/:id', (req, res) => {
+
+// update a campus
+api.put('/:id', upload.single('image'), (req, res) => {
+    console.log("req body  in the update", req.body);
+    console.log("req body  in the update", req.file);
     Campus.findById(req.params.id)
     .then( campus => {
         if(!campus) res.sendStatus(404);
-        else return campus.update({ name: req.body.name, image: req.body.image });
+        else if(req.file) return campus.update({ name: req.body.campusName, image: req.file.filename });
+        else return campus.update({ name: req.body.campusName });
     })
     .then((campus) =>{
         res.json(campus);

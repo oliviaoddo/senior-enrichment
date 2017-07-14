@@ -129,6 +129,7 @@ export function postCampus (campus) {
 }
 
 export function updateCampus (campus, campusID) {
+  console.log("updated campus in the thunk", campus)
   return function thunk (dispatch) {
     return axios.put(`/api/campuses/${campusID}`, campus)
       .then(res => res.data)
@@ -143,7 +144,6 @@ export function updateCampus (campus, campusID) {
 }
 
 export function updateStudent (student, studentId) {
-  console.log(student, studentId)
   return function thunk (dispatch) {
     return axios.put(`/api/students/${studentId}`, student)
       .then(res => res.data)

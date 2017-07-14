@@ -9,7 +9,8 @@ class Campuses extends Component{
     this.state = {
       campusEntry: '',
       campuses: [],
-      searchValue: ''
+      searchValue: '',
+      imageEntry: ''
     }
     this.submitCampus = this.submitCampus.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -36,7 +37,7 @@ class Campuses extends Component{
   }
 
   render(){
-      console.log(this.state.searchValue);
+      console.log("image state", this.state.imageEntry);
       const campuses = this.state.campuses.filter(campus =>  campus.name.match(this.state.searchValue) || campus.name.match(this.state.searchValue.toUpperCase()) )
       return (
     <div className="container">
@@ -53,20 +54,20 @@ class Campuses extends Component{
       </div>
     </div>
 
-    <form className="col s6 right-align" encType="multipart/form-data" action="/images" onSubmit={this.submitCampus} >
+    <form className="col s6 right-align" encType="multipart/form-data" onSubmit={this.submitCampus}>
      <div className="input-field inline">
             <input name="campusName"onChange={(event) => this.setState({campusEntry: event.target.value})} value={this.state.campusEntry} id="campus-name" placeholder="Add a Campus" required/>
     </div>
     <div className="file-field input-field inline">
       <div className="btn">
         <span>File</span>
-        <input type="file"/>
+        <input onChange={(event)=>this.setState({imageEntry: event.target.value.slice(12)})} id="campus-image" name="image" type="file" required/>
       </div>
       <div className="file-path-wrapper">
-        <input className="file-path validate" type="text"/>
+        <input className="file-path validate" type="text" value={this.state.imageEntry}/>
       </div>
     </div>
-    <div className="file-field input-field inline">
+    <div className="input-field inline">
         <button type="submit" className="btn-floating btn-small waves-effect waves-light teal"><i className='material-icons'>add</i></button>
     </div>
   </form>
@@ -78,7 +79,7 @@ class Campuses extends Component{
                 <div key={campus.id} className="col m4">
                  <div className="card">
                   <div className="card-image waves-effect waves-block waves-light">
-                  <img className="activator" src={campus.image}></img>
+                  <img className="activator" src={`/images/${campus.image}`}></img>
                 </div>
                 <div className="card-content">
                   <span className="card-title activator grey-text text-darken-4">
@@ -98,8 +99,14 @@ class Campuses extends Component{
 
     submitCampus(event){
       event.preventDefault();
-      this.props.handleSubmit({name: event.target.campusName.value, image: 'img.jpg'})
+      const formData = new FormData();
+      const fileInput = document.getElementById('campus-image');
+      formData.append('campusName',event.target.campusName.value);
+      formData.append('image', fileInput.files[0]);
+      this.props.handleSubmit(formData);
+      // this.props.handleSubmit({name: event.target.campusName.value, image: event.target.image.value})
       this.setState({campusEntry: ''});
+      this.setState({imageEntry: ''});
     }
 
 }
