@@ -76,7 +76,7 @@ class SingleCampus extends Component{
                                 <button type="submit" className="btn-floating btn-small waves-effect waves-light teal"><i className='material-icons'>check</i></button>
                             </div>
                             <div className="input-field inline">
-                                <button onClick={this.props.removeCampus} className="btn-floating btn-small waves-effect waves-light teal"><i className='material-icons'>delete</i></button>
+                                <i onClick={this.props.removeCampus} className="fa fa-times-circle fa-3x icon-delete" aria-hidden="true"></i>
                             </div>
                           </form>
                         </div>
