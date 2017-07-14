@@ -61,11 +61,11 @@ api.put('/:id', (req, res) => {
         .then( user =>{
             return user.setCampus(campus)
         })
-        .then( () =>{
-            res.sendStatus(200);
+        .then( user =>{
+            res.json(user);
         })
         .catch( err =>{
-            res.status(err.status).send(err.message);
+           res.send(err.message);
         });
     })
     .catch(err => {

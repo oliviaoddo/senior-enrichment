@@ -1,13 +1,33 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { fetchStudent } from '../store';
+import { fetchStudent, updateStudent, deleteStudent } from '../store';
 import { connect } from 'react-redux';
-
+import {Input} from 'react-materialize'
 
 class SingleStudent extends Component{
+  constructor(props) {
+    console.log(props);
+    super(props);
+    this.state = {
+      lastName: '',
+      firstName: '',
+      email: '',
+      selectedCampus: ''
+    }
+  }
     componentDidMount() {
         const studentId = this.props.match.params.id
         this.props.fetchStudent(studentId)
+        .then(() =>{
+          console.log("props in promise", this.props)
+          this.setState({
+            firstName: this.props.student.first_name,
+            lastName: this.props.student.last_name,
+            email: this.props.student.email,
+            selectedCampus: this.props.student.campusId
+           })
+        })
+        console.log("props in mount", this.props);
     }
     render(){
         return (
@@ -16,22 +36,31 @@ class SingleStudent extends Component{
                         <div className="row">
                             <div className="col m6">
                                 <h2>{this.props.student.email}</h2>
-
-                                <form className="col s12" >
+                                <label>Edit</label>
+                                <form onSubmit={this.props.handleSubmit} className="col s12" >
                                  <div className="input-field inline">
-                                        <input name="campusName" id="campus-name" placeholder={this.props.student.first_name}/>
+                                        <input onChange={(event) => this.setState({firstName: event.target.value})} name="firstName" value={this.state.firstName}/>
                                 </div>
                                 <div className="input-field inline">
-                                        <input name="campusName" id="campus-name" placeholder={this.props.student.last_name}/>
+                                        <input onChange={(event) => this.setState({lastName: event.target.value})} name="lastName" value={this.state.lastName}/>
                                 </div>
                                 <div className="input-field inline">
-                                        <input name="campusName" id="campus-name" placeholder={this.props.student.email}/>
+                                        <input onChange={(event) => this.setState({email: event.target.value})} name="email"value={this.state.email}/>
                                 </div>
-                                <div className="file-field input-field inline">
+                                <div className="input-field inline">
+                                  <Input onChange={(event) => this.setState({selectedCampus: event.target.value})}  s={10} type='select' value={this.state.selectedCampus}name="campusType">
+                                     {
+                                      this.props.campuses.map(campus => {
+                                        return <option key={campus.id} value={campus.id}>{campus.name}</option>
+                                      })
+                                   }
+                                  </Input>
+                                </div>
+                                <div className="input-field inline">
                                     <button type="submit" className="btn-floating btn-small waves-effect waves-light teal"><i className='material-icons'>check</i></button>
                                 </div>
-                                <div className="file-field input-field inline">
-                                    <button onClick={this.props.removeCampus} className="btn-floating btn-small waves-effect waves-light teal"><i className='material-icons'>delete</i></button>
+                                <div className="input-field inline">
+                                    <button onClick={this.props.removeStudent} className="btn-floating btn-small waves-effect waves-light teal"><i className='material-icons'>delete</i></button>
                                 </div>
                               </form>
                               </div>
@@ -42,11 +71,11 @@ class SingleStudent extends Component{
                                     return (
                                              <div key={campus.id} className="card">
                                               <div className="card-image waves-effect waves-block waves-light">
-                                              <img className="activator" src={campus.image}></img>
+                                              <img className="activator" src="http://www.everythinglongbeach.com/wp-content/uploads/2014/01/csulb.jpg"></img>
                                             </div>
                                             <div className="card-content">
                                               <span className="card-title activator grey-text text-darken-4">
-                                              {campus.name}<i className="material-icons right">more_vert</i></span>
+                                              {campus.name}</span>
                                               <p><Link to={`/campus/${campus.id}`}>View Campus</Link></p>
                                             </div>
                                           </div>
@@ -68,8 +97,16 @@ const mapStateToProps = (state) => ({
 
 })
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = (dispatch, ownProps) => ({
   fetchStudent: (studentId) => dispatch(fetchStudent(studentId)),
+  handleSubmit(event){
+    event.preventDefault()
+    dispatch(updateStudent({firstName: event.target.firstName.value , lastName: event.target.lastName.value, email: event.target.email.value, campusId: event.target.campusType.value}, ownProps.match.params.id))
+  },
+  removeStudent(event){
+    event.preventDefault();
+    dispatch(deleteStudent(ownProps.match.params.id, ownProps.history));
+  }
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(SingleStudent)

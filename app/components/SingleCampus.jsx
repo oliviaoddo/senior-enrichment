@@ -9,48 +9,57 @@ class SingleCampus extends Component{
         this.state = {
             firstName: '',
             lastName: '',
-            email: ''
+            email: '',
+            campusEntry: '',
+            search: false,
+            students: [],
+            searchValue: ''
         }
-
-        this.changeFname = this.changeFname.bind(this);
-        this.changeLname = this.changeLname.bind(this);
-        this.changeEmail = this.changeEmail.bind(this);
+        this.onStudentSubmit = this.onStudentSubmit.bind(this);
+        this.handleChange = this.handleChange.bind(this);
     }
+
+    handleChange(event){
+      const input = event.target.value;
+      const cammelCaseInput = input.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+      this.setState( {searchValue: cammelCaseInput})
+    }
+
+    componentWillReceiveProps(nextProps) {
+      this.setState({
+        students: nextProps.students
+      });
+    }
+
+
+
     componentDidMount() {
-        this.props.fetchCampus();
-    }
-
-    changeFname(event){
-        this.setState({firstName: event.target.value})
-        console.log(this.state);
-    }
-    changeLname(event){
-        this.setState({lastName: event.target.value})
-    }
-    changeEmail(event){
-        this.setState({email: event.target.value})
+        this.props.fetchCampus()
+        .then(() => {
+          this.setState({campusEntry: this.props.campus.name, students: this.props.students.filter(student => student.campusId === this.props.campus.id) })
+        })
     }
 
     render(){
-        console.log(this.props.students);
+        const students =  this.state.students.filter(student =>  student.first_name.match(this.state.searchValue) || student.last_name.match(this.state.searchValue) || student.first_name.concat(' ').concat(student.last_name).match(this.state.searchValue))
         return (
                 <div className='container'>
-                    {this.props.campus ?
                     <div>
                         <div className="row">
                         <h1>{this.props.campus.name}</h1>
                             <div className="col m5">
                                   <div className="card">
                                     <div className="card-image waves-effect waves-block waves-light">
-                                      <img className="activator" src={this.props.campus.image}></img>
+                                      <img className="activator" src="http://www.everythinglongbeach.com/wp-content/uploads/2014/01/csulb.jpg"></img>
                                     </div>
                                   </div>
                             </div>
                             <div className="col m7">
                             <div className="row">
-                            <form className="col s12 right-align" onSubmit={this.props.editCampus} >
+                            <form className="col s12 right-align" id="edit-form" onSubmit={this.props.editCampus} >
+                            <label htmlFor="edit-form">Edit</label>
                              <div className="input-field inline">
-                                    <input name="campusName"onChange={this.props.editCampus} value={this.props.campus.newEntry} id="campus-name" placeholder={this.props.campus.name}/>
+                                    <input name="campusName"onChange={(event) => this.setState({campusEntry: event.target.value})} id="campus-name" value={this.state.campusEntry} required/>
                             </div>
                             <div className="file-field input-field inline">
                               <div className="btn">
@@ -61,10 +70,10 @@ class SingleCampus extends Component{
                                 <input className="file-path validate" value={this.props.campus.image} type="text"/>
                               </div>
                             </div>
-                            <div className="file-field input-field inline">
+                            <div className="input-field inline">
                                 <button type="submit" className="btn-floating btn-small waves-effect waves-light teal"><i className='material-icons'>check</i></button>
                             </div>
-                            <div className="file-field input-field inline">
+                            <div className="input-field inline">
                                 <button onClick={this.props.removeCampus} className="btn-floating btn-small waves-effect waves-light teal"><i className='material-icons'>delete</i></button>
                             </div>
                           </form>
@@ -73,8 +82,10 @@ class SingleCampus extends Component{
 
                         </div>
                         <div className="row">
-                            <h5>Students</h5>
-                                <form onSubmit={this.props.handleSubmit}>
+                            <h5>Students <i onClick={() => this.setState({search: true})}className="material-icons">search</i>{this.state.search ? <div className="input-field inline">
+                                    <input name="campusName" onChange={this.handleChange} id="campus-name" placeholder="Search for a Student"/>
+                            </div>: null }</h5>
+                                <form onSubmit={this.onStudentSubmit}>
                                   <table className="striped responsive-table">
                                     <thead>
                                       <tr>
@@ -86,16 +97,19 @@ class SingleCampus extends Component{
                                     </thead>
 
                                     <tbody>
+                                    {!this.state.searchValue ?
                                     <tr>
 
-                                            <td><input value={this.state.firstName} name="firstName" onChange={this.changeFname}></input></td>
-                                            <td><input value={this.state.lastName} name="lastName" onChange={this.changeLname} ></input></td>
-                                            <td><input value={this.state.email} name="email" onChange={this.changeEmail} ></input></td>
+                                            <td><input placeholder={`Add a student to ${this.props.campus.name}`} value={this.state.firstName} name="firstName" onChange={(event) => this.setState({firstName: event.target.value})} required></input></td>
+                                            <td><input value={this.state.lastName} name="lastName" onChange={(event) => this.setState({lastName: event.target.value})} required></input></td>
+                                            <td><input value={this.state.email} name="email" onChange={(event) => this.setState({email: event.target.value})} type="email" required></input></td>
                                             <td><button type="submit" className="btn-floating btn-small waves-effect waves-light teal"><i className='material-icons'>add</i></button></td>
 
                                     </tr>
+                                    : null
+                                  }
                                     {
-                                        this.props.students.filter(student => student.campusId === this.props.campus.id)
+                                        students.filter(student => student.campusId === this.props.campus.id)
                                         .map(student => {
                                             return (
                                                     <tr key={student.id}>
@@ -112,11 +126,15 @@ class SingleCampus extends Component{
                                 </form>
                         </div>
                         </div>
-                        : null
-                        }
                     </div>
                 )
     }
+
+  onStudentSubmit(event) {
+    event.preventDefault();
+    this.props.handleSubmit({firstName: event.target.firstName.value, lastName: event.target.lastName.value, email: event.target.email.value, campusId: this.props.match.params.id})
+    this.setState({firstName: '', lastName: '', email: ''});
+  }
 }
 
 const mapStateToProps = (state) => ({
@@ -128,19 +146,8 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
   fetchCampus: () => dispatch(fetchCampus(ownProps.match.params.id)),
-  handleSubmit(event){
-      event.preventDefault();
-      dispatch(postStudent({firstName: event.target.firstName.value, lastName: event.target.lastName.value, email: event.target.email.value, campusId: ownProps.match.params.id}));
-      // this.setState({firstName: '', lastName: '', email: ''});
-  },
+  handleSubmit: (student) => dispatch(postStudent(student)),
   editCampus(event){
-      dispatch(changeCampus(event.target.value))
-  },
-  changeImage(event){
-      event.preventDefault();
-  },
-
-    editCampus(event){
       event.preventDefault();
        dispatch(updateCampus({name: event.target.campusName.value, image: 'img.jpg'}, ownProps.match.params.id));
   },

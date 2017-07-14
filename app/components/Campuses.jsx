@@ -3,14 +3,59 @@ import { Route, Switch, Link } from 'react-router-dom';
 import { connect } from "react-redux";
 import { changeCampus, postCampus } from '../store'
 
-function Campuses(props) {
+class Campuses extends Component{
+  constructor(props) {
+    super(props);
+    this.state = {
+      campusEntry: '',
+      campuses: [],
+      searchValue: ''
+    }
+    this.submitCampus = this.submitCampus.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      campuses: nextProps.campuses
+    });
+  }
+
+  componentDidMount() {
+    this.setState({
+      campuses: this.props.campuses
+    });
+  }
+
+
+
+  handleChange(event){
+    const input = event.target.value;
+    const cammelCaseInput = input.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1);});
+    this.setState({searchValue: cammelCaseInput})
+  }
+
+  render(){
+      console.log(this.state.searchValue);
+      const campuses = this.state.campuses.filter(campus =>  campus.name.match(this.state.searchValue) || campus.name.match(this.state.searchValue.toUpperCase()) )
       return (
     <div className="container">
     <h1>Campuses</h1>
     <div className="row">
-    <form className="col s12 right-align" encType="multipart/form-data" action="/images" onSubmit={props.handleSubmit} >
+
+    <div className="col s6">
+      <div className="row">
+        <div className="input-field col s12">
+          <i className="material-icons prefix">search</i>
+          <input onChange={this.handleChange} type="text" id="campus-input" className="autocomplete"></input>
+          <label htmlFor="campus-input">Search for a Campus</label>
+        </div>
+      </div>
+    </div>
+
+    <form className="col s6 right-align" encType="multipart/form-data" action="/images" onSubmit={this.submitCampus} >
      <div className="input-field inline">
-            <input name="campusName"onChange={props.handleChange} value={props.newEntry} id="campus-name" placeholder="Campus Name"/>
+            <input name="campusName"onChange={(event) => this.setState({campusEntry: event.target.value})} value={this.state.campusEntry} id="campus-name" placeholder="Add a Campus" required/>
     </div>
     <div className="file-field input-field inline">
       <div className="btn">
@@ -28,7 +73,7 @@ function Campuses(props) {
   </div>
     <div className="row">
     {
-      props.campuses.map(campus => {
+      campuses.map(campus => {
         return (
                 <div key={campus.id} className="col m4">
                  <div className="card">
@@ -37,12 +82,8 @@ function Campuses(props) {
                 </div>
                 <div className="card-content">
                   <span className="card-title activator grey-text text-darken-4">
-                  {campus.name}<i className="material-icons right">more_vert</i></span>
+                  {campus.name}</span>
                   <p><Link to={`/campus/${campus.id}`}>View Campus</Link></p>
-                </div>
-                <div className="card-reveal">
-                  <span className="card-title grey-text text-darken-4">Card Title<i className="material-icons right">close</i></span>
-                  <p>Here is some more information about this product that is only revealed once clicked on.</p>
                 </div>
               </div>
               </div>
@@ -53,25 +94,22 @@ function Campuses(props) {
     </div>
 
       )
+    }
 
+    submitCampus(event){
+      event.preventDefault();
+      this.props.handleSubmit({name: event.target.campusName.value, image: 'img.jpg'})
+      this.setState({campusEntry: ''});
+    }
 
 }
 
 const mapStateToProps = state => ({
-  campuses: state.campuses,
-  newEntry: state.newCampusEntry
+  campuses: state.campuses
 });
 
 const mapDispatchToProps = dispatch => ({
-  handleChange(event){
-    dispatch(changeCampus(event.target.value))
-
-  },
-  handleSubmit(event){
-    event.preventDefault();
-    dispatch(postCampus({name: event.target.campusName.value, image: 'img.jpg'}))
-    dispatch(changeCampus(''));
-  }
+  handleSubmit: (campus) => dispatch(postCampus(campus))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Campuses);

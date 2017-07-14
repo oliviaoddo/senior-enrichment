@@ -8,8 +8,7 @@ const initialState = {
   students: [],
   campuses: [],
   campus: {},
-  student: {},
-  newCampusEntry: ''
+  student: {}
 };
 
 export const GET_STUDENTS = "GET_STUDENTS";
@@ -17,7 +16,6 @@ export const ADD_STUDENT = "ADD_STUDENT";
 export const GET_STUDENT = "GET_STUDENT";
 export const GET_CAMPUSES = "GET_CAMPUSES";
 export const GET_CAMPUS = "GET_CAMPUS";
-export const CHANGE_CAMPUS = "CHANGE_CAMPUS";
 export const POST_CAMPUS = "POST_CAMPUS";
 
 
@@ -47,11 +45,6 @@ export function getCampus (campus) {
   return action;
 }
 
-export function changeCampus (campus) {
-  const action = { type: CHANGE_CAMPUS, campus };
-  return action;
-}
-
 export function newCampus (campus) {
   const action = { type: POST_CAMPUS, campus };
   return action;
@@ -71,7 +64,6 @@ export function fetchStudents () {
 }
 
 export function postStudent (student) {
-  console.log(student);
   return function thunk (dispatch) {
     return axios.post('/api/students', student)
       .then(res => res.data)
@@ -141,6 +133,7 @@ export function updateCampus (campus, campusID) {
     return axios.put(`/api/campuses/${campusID}`, campus)
       .then(res => res.data)
       .then(updatedCampus => {
+        // dispatch(fetchStudents());
         const action = getCampus(updatedCampus);
         dispatch(action);
         // socket.emit('new-channel', newChannel);
@@ -149,10 +142,26 @@ export function updateCampus (campus, campusID) {
 
 }
 
-export function deleteCampus (campusID, history) {
+export function updateStudent (student, studentId) {
+  console.log(student, studentId)
   return function thunk (dispatch) {
-    return axios.delete(`/api/campuses/${campusID}`)
+    return axios.put(`/api/students/${studentId}`, student)
+      .then(res => res.data)
+      .then(updatedStudent => {
+        const action = getStudent(updatedStudent);
+        dispatch(action);
+        // socket.emit('new-channel', newChannel);
+      });
+  }
+
+}
+
+export function deleteCampus (campusId, history) {
+  return function thunk (dispatch) {
+    return axios.delete(`/api/campuses/${campusId}`)
       .then(() => {
+        const campusesThunk = fetchCampuses();
+        dispatch(campusesThunk);
         history.push('/campuses');
         // socket.emit('new-channel', newChannel);
       });
@@ -160,6 +169,17 @@ export function deleteCampus (campusID, history) {
 
 }
 
+export function deleteStudent (studentId, history) {
+  return function thunk (dispatch) {
+    return axios.delete(`/api/students/${studentId}`)
+      .then(() => {
+        dispatch(fetchStudents());
+        history.push('/students');
+        // socket.emit('new-channel', newChannel);
+      });
+  }
+
+}
 
 const rootReducer = (state = initialState, action) => {
   switch (action.type) {
@@ -173,8 +193,6 @@ const rootReducer = (state = initialState, action) => {
       return Object.assign({}, state, {campus: action.campus})
     case ADD_STUDENT:
       return Object.assign({}, state, { students: state.students.concat(action.student) });
-    case CHANGE_CAMPUS:
-      return Object.assign({}, state, {newCampusEntry: action.campus})
     case POST_CAMPUS:
       return Object.assign({}, state, { campuses: state.campuses.concat(action.campus) });
     default:
