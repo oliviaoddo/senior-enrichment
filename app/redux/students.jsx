@@ -61,7 +61,6 @@ export default function reducer (state = initialState, action){
 /* -----------------    THUNK CREATORS     ------------------ */
 
 export function fetchStudents () {
-
   return function thunk (dispatch) {
     return axios.get('/api/students')
       .then(res => res.data)

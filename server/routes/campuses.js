@@ -5,7 +5,6 @@ var Promise = require('bluebird');
 const  { Campus } = require('../../db/models');
 const {resolve} = require('path')
 const multer = require('multer');
-// const upload = multer({ dest: resolve(__dirname, '../../public', 'image')})
 
 
 const storage = multer.diskStorage({
@@ -59,8 +58,6 @@ api.post('/', upload.single('image'), (req, res, next) => {
 
 // update a campus
 api.put('/:id', upload.single('image'), (req, res) => {
-    console.log("req body  in the update", req.body);
-    console.log("req body  in the update", req.file);
     Campus.findById(req.params.id)
     .then( campus => {
         if(!campus) res.sendStatus(404);

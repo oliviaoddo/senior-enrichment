@@ -1,7 +1,7 @@
 'use strict';
 var Sequelize = require('sequelize')
 var db = require('../index.js')
-const {User} = require('./index');
+const { Student } = require('./index');
 
 module.exports = db.define('campus', {
   name: Sequelize.STRING,
@@ -9,7 +9,7 @@ module.exports = db.define('campus', {
 }, {
   hooks: {
     beforeDestroy: function(campus){
-      User.update({campusId: null}, {where: {campusId: campus.id}});
+      Student.update({campusId: null}, {where: {campusId: campus.id}});
         }
     }
 }
