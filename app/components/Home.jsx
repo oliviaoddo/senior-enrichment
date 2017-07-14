@@ -3,7 +3,11 @@ import React, { Component } from 'react';
 export default class Home extends Component {
     render(){
         return(
-                <h1>Home</h1>
+               <div className="home-image">
+                    <img id="home-img" src="home-image.jpg"></img>
+                    <h1 className="center-align white-text" id="home-text">MHI Academy of JavaScript</h1>
+                </div>
+
                )
     }
 
