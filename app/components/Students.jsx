@@ -16,6 +16,7 @@ class Students extends Component {
       searchValue: ''
     }
     this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -56,7 +57,7 @@ class Students extends Component {
                 </div>
               </div>
 
-              <form onSubmit={this.props.handleSubmit}>
+              <form onSubmit={this.handleSubmit}>
                <table className='striped responsive-table'>
                   <thead>
                     <tr>
@@ -72,9 +73,9 @@ class Students extends Component {
                     { !this.state.searchValue ?
                       <tr>
 
-                              <td><input value={this.state.firstName} placeholder="Add a Student" name="firstName" onChange={(event) => this.setState(firstName: event.target.value )} required></input></td>
-                              <td><input value={this.state.lastName} name="lastName" onChange={(event) => this.setState(lastName: event.target.value )} required></input></td>
-                              <td><input value={this.state.email} name="email" onChange={(event) => this.setState(email: event.target.value )} required type="email"></input></td>
+                              <td><input value={this.state.firstName} placeholder="Add a Student" name="firstName" onChange={(event) => this.setState({firstName: event.target.value} )} required></input></td>
+                              <td><input value={this.state.lastName} name="lastName" onChange={(event) => this.setState({lastName: event.target.value })} required></input></td>
+                              <td><input value={this.state.email} name="email" onChange={(event) => this.setState({email: event.target.value} )} required type="email"></input></td>
                               <td>
                                   <Input s={10} type='select' defaultValue='' name="campusType">
                                    <option value="" disabled>Select a Campus</option>
@@ -114,8 +115,16 @@ class Students extends Component {
           )
     }
 
-}
+    handleSubmit(event){
+      const fnameInput = event.target.firstName.value
+      const lnameInput = event.target.lastName.value
+      event.preventDefault();
+      this.props.submitStudent({firstName: fnameInput.charAt(0).toUpperCase() + fnameInput.slice(1) , lastName: lnameInput.charAt(0).toUpperCase() + lnameInput.slice(1), email: event.target.email.value , campusId: event.target.campusType.value});
+      this.setState({firstName: '', lastName: '', email: '', selectedCampus: ''});
+  }
 
+
+}
 
 const mapStateToProps = state => ({
   students: state.students,
@@ -123,10 +132,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  handleSubmit(event){
-    event.preventDefault();
-    dispatch(postStudent({firstName: event.target.firstName.value , lastName: event.target.lastName.value, email: event.target.email.value , campusId: event.target.campusType.value}));
-  }
+  submitStudent: (student) => dispatch(postStudent(student))
 })
 
 

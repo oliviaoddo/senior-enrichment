@@ -60,7 +60,7 @@ class SingleCampus extends Component{
                             <form className="col s12 right-align" encType="multipart/form-data" id="edit-form" onSubmit={this.onSubmitCampus}>
                             <label htmlFor="edit-form">Edit</label>
                              <div className="input-field inline">
-                                    <input name="campusName"onChange={(event) => this.setState({campusEntry: event.target.value})} id="campus-name" value={this.state.campusEntry} required/>
+                                    <input name="campusName"onChange={(event) => this.setState({campusEntry: event.target.value})} id="campus-name" value={this.state.campusEntry.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1);})} required/>
                             </div>
                             <div className="file-field input-field inline">
                               <div className="btn">
@@ -132,8 +132,10 @@ class SingleCampus extends Component{
     }
 
   onStudentSubmit(event) {
+    const fnameInput = event.target.firstName.value
+    const lnameInput = event.target.lastName.value
     event.preventDefault();
-    this.props.handleSubmit({firstName: event.target.firstName.value, lastName: event.target.lastName.value, email: event.target.email.value, campusId: this.props.match.params.id})
+    this.props.handleSubmit({firstName: fnameInput.charAt(0).toUpperCase() + fnameInput.slice(1) , lastName: lnameInput.charAt(0).toUpperCase() + lnameInput.slice(1), email: event.target.email.value, campusId: this.props.match.params.id})
     this.setState({firstName: '', lastName: '', email: ''});
 
 
@@ -143,7 +145,7 @@ class SingleCampus extends Component{
       event.preventDefault();
       const formData = new FormData();
       const fileInput = document.getElementById('campus-image');
-      formData.append('campusName', event.target.campusName.value);
+      formData.append('campusName', event.target.campusName.value.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1);}));
       console.log("file input in the on submit", fileInput.files[0]);
       if(fileInput.files[0]) formData.append('image', fileInput.files[0]);
       this.props.editCampus(formData);

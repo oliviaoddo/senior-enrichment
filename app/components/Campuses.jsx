@@ -101,10 +101,9 @@ class Campuses extends Component{
       event.preventDefault();
       const formData = new FormData();
       const fileInput = document.getElementById('campus-image');
-      formData.append('campusName',event.target.campusName.value);
+      formData.append('campusName', event.target.campusName.value.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1);}));
       formData.append('image', fileInput.files[0]);
       this.props.handleSubmit(formData);
-      // this.props.handleSubmit({name: event.target.campusName.value, image: event.target.image.value})
       this.setState({campusEntry: ''});
       this.setState({imageEntry: ''});
     }
