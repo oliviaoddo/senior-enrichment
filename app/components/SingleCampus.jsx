@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import { connect } from "react-redux";
-import { fetchCampus, postStudent, changeCampus, updateCampus, deleteCampus } from '../store';
+import { fetchCampus, postStudent, changeCampus, updateCampus, deleteCampus, deleteStudent } from '../store';
 
 class SingleCampus extends Component{
     constructor(props) {
@@ -18,6 +18,7 @@ class SingleCampus extends Component{
         this.onStudentSubmit = this.onStudentSubmit.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.onSubmitCampus = this.onSubmitCampus.bind(this);
+        this.handleDelete = this.handleDelete.bind(this);
     }
 
     handleChange(event){
@@ -94,6 +95,7 @@ class SingleCampus extends Component{
                                           <th>Last Name</th>
                                           <th>Email</th>
                                           <th></th>
+                                          <th></th>
                                       </tr>
                                     </thead>
 
@@ -105,6 +107,7 @@ class SingleCampus extends Component{
                                             <td><input value={this.state.lastName} name="lastName" onChange={(event) => this.setState({lastName: event.target.value})} required></input></td>
                                             <td><input value={this.state.email} name="email" onChange={(event) => this.setState({email: event.target.value})} type="email" required></input></td>
                                             <td><button type="submit" className="btn-floating btn-small waves-effect waves-light teal"><i className='material-icons'>add</i></button></td>
+                                            <td></td>
 
                                     </tr>
                                     : null
@@ -118,6 +121,7 @@ class SingleCampus extends Component{
                                                         <td>{student.last_name}</td>
                                                         <td>{student.email}</td>
                                                         <td><Link to={`/student/${student.id}`}><i className="material-icons">visibility</i></Link></td>
+                                                        <td><i id={student.id} onClick={this.handleDelete} className="fa fa-times-circle fa-lg icon-delete" aria-hidden="true"></i></td>
                                                     </tr>
                                                     )
                                         })
@@ -130,6 +134,11 @@ class SingleCampus extends Component{
                     </div>
                 )
     }
+
+
+  handleDelete(event){
+      this.props.removeStudent(event.target.id);
+  }
 
   onStudentSubmit(event) {
     const fnameInput = event.target.firstName.value
@@ -163,10 +172,11 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   fetchCampus: () => dispatch(fetchCampus(ownProps.match.params.id)),
   handleSubmit: (student) => dispatch(postStudent(student)),
   editCampus: (data) => dispatch(updateCampus(data,ownProps.match.params.id )),
-    removeCampus(event){
+  removeCampus(event){
       event.preventDefault();
        dispatch(deleteCampus(ownProps.match.params.id, ownProps.history));
-  }
+  },
+  removeStudent: (id) => dispatch(deleteStudent(id, ownProps.history))
 })
 
 

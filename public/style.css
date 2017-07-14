@@ -25,4 +25,5 @@ footer{
 
 .icon-delete{
     color: #e53935;
+    cursor: pointer;
 }

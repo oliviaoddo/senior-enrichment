@@ -32,23 +32,29 @@ class SingleStudent extends Component{
     render(){
         return (
                     <div className='container'>
-                        <h1>{this.props.student.first_name} {this.props.student.last_name}</h1>
                         <div className="row">
-                            <div className="col m6">
-                                <h2>{this.props.student.email}</h2>
+                            <div className="col m12">
+                                <h1>{this.props.student.first_name} {this.props.student.last_name}</h1>
+                                <h3>{this.props.student.email}</h3>
                                 <label>Edit</label>
                                 <form onSubmit={this.props.handleSubmit} className="col s12" >
-                                 <div className="input-field inline">
+                                <div className="row">
+                                <div className="col s12">
+                                 <div className="input-field inline col s6">
                                         <input onChange={(event) => this.setState({firstName: event.target.value})} name="firstName" value={this.state.firstName.charAt(0).toUpperCase() + this.state.firstName.slice(1)}/>
                                 </div>
-                                <div className="input-field inline">
+                                <div className="input-field inline col s6">
                                         <input onChange={(event) => this.setState({lastName: event.target.value})} name="lastName" value={this.state.lastName.charAt(0).toUpperCase() + this.state.lastName.slice(1)}/>
                                 </div>
-                                <div className="input-field inline">
+                               </div>
+                               </div>
+                               <div className="row">
+                               <div className="col s12">
+                                <div className="input-field inline col s6">
                                         <input onChange={(event) => this.setState({email: event.target.value})} name="email"value={this.state.email}/>
                                 </div>
-                                <div className="input-field inline">
-                                  <Input onChange={(event) => this.setState({selectedCampus: event.target.value})}  s={10} type='select' value={this.state.selectedCampus}name="campusType">
+                                <div className="input-field inline col s6">
+                                  <Input onChange={(event) => this.setState({selectedCampus: event.target.value})}  s={10} type='select' value={this.state.selectedCampus.toString()} name="campusType">
                                      {
                                       this.props.campuses.map(campus => {
                                         return <option key={campus.id} value={campus.id}>{campus.name}</option>
@@ -56,22 +62,26 @@ class SingleStudent extends Component{
                                    }
                                   </Input>
                                 </div>
-                                <div className="input-field inline">
+                                 <div className="input-field inline right">
+                                   <i onClick={this.props.removeStudent} className="fa fa-times-circle fa-3x icon-delete" aria-hidden="true"></i>
+
+                                </div>
+                                <div className="input-field inline right">
                                     <button type="submit" className="btn-floating btn-small waves-effect waves-light teal"><i className='material-icons'>check</i></button>
                                 </div>
-                                <div className="input-field inline">
-                                    <button onClick={this.props.removeStudent} className="btn-floating btn-small waves-effect waves-light teal"><i className='material-icons'>delete</i></button>
+                                </div>
                                 </div>
                               </form>
                               </div>
-                             <div className="col m6">
+                            </div>
+                             <div className="row">
                             {
                                 this.props.campuses.filter(campus => campus.id === this.props.student.campusId)
                                 .map(campus => {
                                     return (
                                              <div key={campus.id} className="card">
                                               <div className="card-image waves-effect waves-block waves-light">
-                                              <img className="activator" src="http://www.everythinglongbeach.com/wp-content/uploads/2014/01/csulb.jpg"></img>
+                                              <img className="activator" src={`/images/${campus.image}`}></img>
                                             </div>
                                             <div className="card-content">
                                               <span className="card-title activator grey-text text-darken-4">
@@ -84,7 +94,7 @@ class SingleStudent extends Component{
                             }
                         </div>
 
-                    </div>
+
                     </div>
                 )
     }

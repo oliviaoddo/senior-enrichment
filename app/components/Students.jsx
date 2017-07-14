@@ -120,7 +120,6 @@ class Students extends Component {
     }
 
     handleDelete(event){
-        console.log(event.target.id)
         this.props.removeStudent(event.target.id);
     }
 
