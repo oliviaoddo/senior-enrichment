@@ -13,42 +13,46 @@ const initialState = {
 const GET_CAMPUSES = "GET_CAMPUSES";
 const GET_CAMPUS = "GET_CAMPUS";
 const POST_CAMPUS = "POST_CAMPUS";
+const UPDATE_CAMPUS = "UPDATE_CAMPUS";
+const DELETE_CAMPUS = "DELETE_CAMPUS";
 
 /* -----------------    ACTION CREATORS    ------------------ */
 
-function getCampuses (campuses) {
-  const action = { type: GET_CAMPUSES, campuses };
-  return action;
-}
+const getCampuses = campuses => (
+  { type: GET_CAMPUSES, campuses }
+)
 
-function getCampus (campus) {
-  const action = { type: GET_CAMPUS, campus };
-  return action;
-}
+const getCampus = campus => ({
+   type: GET_CAMPUS, campus
+})
 
-function newCampus (campus) {
-  const action = { type: POST_CAMPUS, campus };
-  return action;
-}
+const newCampus = campus => (
+  { type: POST_CAMPUS, campus }
+)
+
+const putCampus = campus => (
+  { type: UPDATE_CAMPUS, campus }
+)
+
+const removeCampus = campus => (
+  { type: DELETE_CAMPUS, campus }
+)
 
 /* -----------------    THUNK CREATORS     ------------------ */
 
-export function fetchCampuses () {
-
-  return function thunk (dispatch) {
+export const fetchCampuses = () => dispatch => {
     return axios.get('/api/campuses')
       .then(res => res.data)
       .then(campuses => {
         const action = getCampuses(campuses);
         dispatch(action);
-      });
+      })
+      .catch(error => console.log(error));
   }
-}
 
 
-export function fetchCampus (campusID) {
-  console.log(campusID);
-  return function thunk (dispatch) {
+
+export const fetchCampus = campusID => dispatch => {
     return axios.get(`/api/campuses/${campusID}`)
       .then(res => res.data)
       .then(campus => {
@@ -56,51 +60,42 @@ export function fetchCampus (campusID) {
         dispatch(action);
       });
   }
-}
 
 
 
-export function postCampus (campus) {
-  console.log("the campus", campus);
-  return function thunk (dispatch) {
+export const postCampus = campus => dispatch => {
     return axios.post('/api/campuses', campus)
       .then(res => res.data)
       .then(addedCampus => {
         const action = newCampus(addedCampus);
         dispatch(action);
-        // socket.emit('new-channel', newChannel);
-      });
+      })
+      .catch(error => console.log(error));
   }
 
-}
 
 
-export function updateCampus (campus, campusID) {
-  console.log("updated campus in the thunk", campus)
-  return function thunk (dispatch) {
+export const updateCampus = (campus, campusID) => dispatch => {
     return axios.put(`/api/campuses/${campusID}`, campus)
       .then(res => res.data)
       .then(updatedCampus => {
-        // dispatch(fetchStudents());
-        const action = getCampus(updatedCampus);
+        const action = putCampus(updatedCampus);
         dispatch(action);
-        // socket.emit('new-channel', newChannel);
       });
-  }
-
 }
 
 
-export function deleteCampus (campusId, history) {
-  return function thunk (dispatch) {
+export const deleteCampus = (campusId, history) => dispatch => {
     return axios.delete(`/api/campuses/${campusId}`)
-      .then(() => {
-        const campusesThunk = fetchCampuses();
-        dispatch(campusesThunk);
+      .then(res => res.data)
+      .then(deletedCampus => {
+        console.log("DELETED CAMPUS", deletedCampus);
+        const action = removeCampus(deletedCampus);
+        dispatch(action);
         history.push('/campuses');
-        // socket.emit('new-channel', newChannel);
+        // const campusesThunk = fetchCampuses();
+        // dispatch(campusesThunk);
       });
-  }
 
 }
 
@@ -117,6 +112,18 @@ export default function reducer (state = initialState, action){
           break;
       case POST_CAMPUS:
         newState.campuses = [...newState.campuses, action.campus];
+        break;
+      case UPDATE_CAMPUS:
+        newState.campuses = newState.campuses.map(campus => {
+          if(campus.id === action.campus.id) return action.campus
+          else return campus
+        })
+        newState.campus = action.campus;
+        break;
+      case DELETE_CAMPUS:
+        newState.campuses = newState.campuses.filter(campus => {
+          if(campus.id !== action.campus.id) return campus;
+        })
         break;
       default:
         return state;

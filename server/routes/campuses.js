@@ -44,8 +44,6 @@ api.get('/:id', (req, res, next) => {
 
 //create a new campus
 api.post('/', upload.single('image'), (req, res, next) => {
-    console.log("body", req.body);
-    console.log("file", req.file);
     Campus.create({name: req.body.campusName, image: req.file.filename})
     .then(campus => {
         res.json(campus);
@@ -76,14 +74,19 @@ api.put('/:id', upload.single('image'), (req, res) => {
 
 //delete a campus
 api.delete('/:id', (req, res, next) =>{
-    Campus.destroy({where: {id: req.params.id}})
-    .then( () => {
-        res.sendStatus(202);
+    Campus.findById(req.params.id)
+    .then(campus => {
+        campus.destroy()
+        .then( () => {
+            res.status(202).json(campus);
+        })
+        .catch(err=>console.log(err));
     })
     .catch( err => {
         res.status(err.status).send(err.message);
     });
 });
+
 
 // when adding a photo, beforeCreate a campus image add a path to public
 

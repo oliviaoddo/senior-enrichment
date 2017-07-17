@@ -14,6 +14,8 @@ const initialState = {
 const GET_STUDENTS = "GET_STUDENTS";
 const ADD_STUDENT = "ADD_STUDENT";
 const GET_STUDENT = "GET_STUDENT";
+const DELETE_STUDENT = "DELETE_STUDENT";
+const UPDATE_STUDENTS = "UPDATE_STUDENTS";
 
 
 /* -----------------    ACTION CREATORS     ------------------ */

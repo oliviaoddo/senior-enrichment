@@ -6,12 +6,6 @@ const { Student } = require('./index');
 module.exports = db.define('campus', {
   name: Sequelize.STRING,
   image: Sequelize.STRING
-}, {
-  hooks: {
-    beforeDestroy: function(campus){
-      Student.destory({where: {campusId: campus.id}});
-        }
-    }
 }
 );
 
