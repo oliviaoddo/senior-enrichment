@@ -75,10 +75,14 @@ api.put('/:id', (req, res) => {
 });
 
 //delete a student
-api.delete('/:id', (req, res, next) => {
-    Student.destroy({where: {id: req.params.id}})
-    .then( () => {
-        res.sendStatus(202)
+api.delete('/:id', (req, res, next) =>{
+    Student.findById(req.params.id)
+    .then(student => {
+        student.destroy()
+        .then( () => {
+            res.status(202).json(student);
+        })
+        .catch(err=>console.log(err));
     })
     .catch( err => {
         res.status(err.status).send(err.message);

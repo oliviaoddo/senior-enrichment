@@ -15,26 +15,21 @@ const GET_STUDENTS = "GET_STUDENTS";
 const ADD_STUDENT = "ADD_STUDENT";
 const GET_STUDENT = "GET_STUDENT";
 const DELETE_STUDENT = "DELETE_STUDENT";
-const UPDATE_STUDENTS = "UPDATE_STUDENTS";
+const UPDATE_STUDENT = "UPDATE_STUDENT";
 
 
 /* -----------------    ACTION CREATORS     ------------------ */
 
-function getStudents (students) {
-  const action = { type: GET_STUDENTS, students };
-  return action;
-}
+const  getStudents = students => ({ type: GET_STUDENTS, students});
 
-function addStudent (student) {
-  const action = { type: ADD_STUDENT, student };
-  return action;
-}
+const addStudent = student => ({ type: ADD_STUDENT, student });
 
+const getStudent = student =>  ({ type: GET_STUDENT, student });
 
-function getStudent (student) {
-  const action = { type: GET_STUDENT, student };
-  return action;
-}
+const putStudent = student =>  ({ type: UPDATE_STUDENT, student });
+
+const removeStudent = student =>  ({ type: DELETE_STUDENT, student });
+
 
 /* -----------------    REDUCER     ------------------ */
 
@@ -51,6 +46,18 @@ export default function reducer (state = initialState, action){
       case ADD_STUDENT:
         newState.students = [...newState.students, action.student];
         break;
+      case UPDATE_STUDENT:
+        newState.students = newState.students.map(student => {
+          if(student.id === action.student.id) return action.student
+          else return student
+        })
+        newState.student = action.student;
+        break;
+      case DELETE_STUDENT:
+        newState.students = newState.students.filter(student => {
+          if(student.id !== action.student.id) return student;
+        });
+        break;
       default:
         return state;
     }
@@ -62,64 +69,49 @@ export default function reducer (state = initialState, action){
 
 /* -----------------    THUNK CREATORS     ------------------ */
 
-export function fetchStudents () {
-  return function thunk (dispatch) {
+export const fetchStudents = () => dispatch => {
     return axios.get('/api/students')
       .then(res => res.data)
       .then(students => {
         const action = getStudents(students);
         dispatch(action);
       });
-  }
 }
 
-export function postStudent (student) {
-  return function thunk (dispatch) {
+export const postStudent =  student => dispatch => {
     return axios.post('/api/students', student)
       .then(res => res.data)
       .then(newStudent => {
         const action = addStudent(newStudent);
         dispatch(action);
-        // socket.emit('new-channel', newChannel);
       });
-  }
-
 }
 
-export function fetchStudent (studentID) {
-  console.log(studentID);
-  return function thunk (dispatch) {
-    return axios.get(`/api/students/${studentID}`)
+export const fetchStudent = studentId  => dispatch => {
+    return axios.get(`/api/students/${studentId}`)
       .then(res => res.data)
       .then(student => {
         const action = getStudent(student);
         dispatch(action);
       });
-  }
 }
 
 
-export function updateStudent (student, studentId) {
-  return function thunk (dispatch) {
+export const updateStudent =  (student, studentId) => dispatch => {
     return axios.put(`/api/students/${studentId}`, student)
       .then(res => res.data)
       .then(updatedStudent => {
-        const action = getStudent(updatedStudent);
+        const action = putStudent(updatedStudent);
         dispatch(action);
-        // socket.emit('new-channel', newChannel);
       });
-  }
-
 }
 
-export function deleteStudent (studentId, history) {
-  return function thunk (dispatch) {
+export const deleteStudent = (studentId, history) => dispatch => {
     return axios.delete(`/api/students/${studentId}`)
-      .then(() => {
-        dispatch(fetchStudents());
+      .then(res => res.data)
+      .then(deletedStudent => {
+        const action = removeStudent(deletedStudent);
+        dispatch(action);
         history.push('/students');
-        // socket.emit('new-channel', newChannel);
       });
-  }
-
 }
