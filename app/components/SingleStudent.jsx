@@ -31,7 +31,7 @@ class SingleStudent extends Component{
       console.log("props in mount", this.props);
     }
     render(){
-        console.log("the student", this.props.student);
+        console.log("the student", this.props.student.campus.name);
         console.log("the props", this.props);
         return (
                     <div className='container'>
@@ -78,23 +78,16 @@ class SingleStudent extends Component{
                               </div>
                             </div>
                              <div className="row">
-                            {
-                                this.props.campuses.filter(campus => campus.id === this.props.student.campusId)
-                                .map(campus => {
-                                    return (
-                                             <div key={campus.id} className="card">
-                                              <div className="card-image waves-effect waves-block waves-light">
-                                              <img className="activator" src={`/images/${campus.image}`}></img>
-                                            </div>
-                                            <div className="card-content">
-                                              <span className="card-title activator grey-text text-darken-4">
-                                              {campus.name}</span>
-                                              <p><Link to={`/campus/${campus.id}`}>View Campus</Link></p>
-                                            </div>
-                                          </div>
-                                        )
-                                })
-                            }
+                               <div className="card">
+                                <div className="card-image waves-effect waves-block waves-light">
+
+                              </div>
+                              <div className="card-content">
+                                <span className="card-title activator grey-text text-darken-4">
+                                {this.props.student.first_name}</span>
+                                <p><Link to={`/campus/${this.props.student.id}`}>View Campus</Link></p>
+                              </div>
+                            </div>
                         </div>
                     </div>
 

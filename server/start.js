@@ -3,6 +3,7 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const {resolve} = require('path')
+const session = require('express-session');
 
 const pkg = require('../package.json')
 
@@ -19,6 +20,12 @@ module.exports = app
   .use(bodyParser.json())
   .use(express.static(resolve(__dirname, '..', 'public'))) // Serve static files from ../public
   .use('/api', require('./routes/api')) // Serve our api
+  .use(session({
+    secret: 'odldiovia',
+    resave: false,
+    saveUninitialized: false
+  }))
+  .use(require('./passort'))
   .get('/*', (_, res) => res.sendFile(resolve(__dirname, '..', 'public', 'index.html'))) // Send index.html for any other requests.
 
   // notice the use of `_` as the first parameter above. This is a pattern for parameters that must exist, but you don't use or reference (or need) in the function body that follows.

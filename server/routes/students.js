@@ -24,8 +24,11 @@ api.get('/', (req, res, next) => {
 
 //get a single student
 api.get('/:id', (req, res, next) => {
-    Student.findById(req.params.id)
+    Student.findOne({where: { id: req.params.id},
+        include: [{model: Campus, as: 'campus'
+    }]})
     .then( student => {
+        console.log(student);
         if(!student) res.sendStatus(404);
         else res.json(student);
     })
