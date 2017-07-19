@@ -1,4 +1,4 @@
-const { TEXT, STRING } = require('sequelize');
+const { TEXT, STRING, BOOLEAN } = require('sequelize');
 var db = require('../index.js')
 const bcrypt = require('bcrypt-nodejs');
 
@@ -24,12 +24,15 @@ module.exports = db.define('user', {
 {
     hooks: {
         beforeCreate: function(instance){
-            instance.password =  bcrypt.hashSync(instance.password, bcrypt.genSaltSync(8), null)
+          console.log(instance);
+            instance.password =  bcrypt.hashSync(instance.password);
         }
     },
     instanceMethods: {
         validPassword: function(password) {
-            return bcrypt.compareSync(password, this.password);
+            const valid =  bcrypt.compareSync(password, this.password);
+            console.log("do they match", valid);
+            return valid;
         }
     }
 })

@@ -43,52 +43,14 @@ class SingleCampus extends Component{
         })
     }
 
-    render(){
-        const students =  this.state.students.filter(student =>  student.first_name.match(this.state.searchValue) || student.last_name.match(this.state.searchValue) || student.first_name.concat(' ').concat(student.last_name).match(this.state.searchValue))
-        return (
-                <div className='container'>
-                    <div>
-                        <div className="row">
-                        <h1>{this.props.campus.name}</h1>
-                            <div className="col m5">
-                                  <div className="card">
-                                    <div className="card-image waves-effect waves-block waves-light">
-                                      <img className="activator" src={`/images/${this.props.campus.image}`}></img>
-                                    </div>
-                                  </div>
-                            </div>
-                            <div className="col m7">
-                            <div className="row">
-                            <form className="col s12 right-align" encType="multipart/form-data" id="edit-form" onSubmit={this.onSubmitCampus}>
-                            <label htmlFor="edit-form">Edit</label>
-                             <div className="input-field inline">
-                                    <input name="campusName"onChange={(event) => this.setState({campusEntry: event.target.value})} id="campus-name" value={this.state.campusEntry.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1);})} required/>
-                            </div>
-                            <div className="file-field input-field inline">
-                              <div className="btn">
-                                <span>File</span>
-                                <input id="campus-image" name="file" type="file"/>
-                              </div>
-                              <div className="file-path-wrapper">
-                                <input className="file-path validate" value={this.props.campus.image} type="text"/>
-                              </div>
-                            </div>
-                            <div className="input-field inline">
-                                <button type="submit" className="btn-floating btn-small waves-effect waves-light teal"><i className='material-icons'>check</i></button>
-                            </div>
-                            <div className="input-field inline">
-                                <i onClick={this.props.removeCampus} className="fa fa-times-circle fa-3x icon-delete" aria-hidden="true"></i>
-                            </div>
-                          </form>
-                        </div>
-                            </div>
-
-                        </div>
-                        <div className="row">
-                            <h5>Students <i onClick={() => this.setState({search: true})}className="material-icons">search</i>{this.state.search ? <div className="input-field inline">
-                                    <input name="campusName" onChange={this.handleChange} id="campus-name" placeholder="Search for a Student"/>
-                            </div>: null }</h5>
-                                <form onSubmit={this.onStudentSubmit}>
+    renderStudents(){
+      const students =  this.state.students.filter(student =>  student.first_name.match(this.state.searchValue) || student.last_name.match(this.state.searchValue) || student.first_name.concat(' ').concat(student.last_name).match(this.state.searchValue))
+      return(
+             <div className="row">
+                        <h5>Students <i onClick={() => this.setState({search: true})}className="material-icons">search</i>{this.state.search ? <div className="input-field inline">
+                                <input name="campusName" onChange={this.handleChange} id="campus-name" placeholder="Search for a Student"/>
+                        </div>: null }</h5>
+             <form onSubmit={this.onStudentSubmit}>
                                   <table className="striped responsive-table">
                                     <thead>
                                       <tr>
@@ -130,7 +92,52 @@ class SingleCampus extends Component{
                                     </tbody>
                                   </table>
                                 </form>
+                                </div>
+
+             )
+    }
+
+    render(){
+        return (
+                <div className='container'>
+                    <div>
+                        <div className="row">
+                        <h1>{this.props.campus.name}</h1>
+                            <div className="col m5">
+                                  <div className="card">
+                                    <div className="card-image waves-effect waves-block waves-light">
+                                      <img className="activator" src={`/images/${this.props.campus.image}`}></img>
+                                    </div>
+                                  </div>
+                            </div>
+                            <div className="col m7">
+                            <div className="row">
+                            <form className="col s12 right-align" encType="multipart/form-data" id="edit-form" onSubmit={this.onSubmitCampus}>
+                            <label htmlFor="edit-form">Edit</label>
+                             <div className="input-field inline">
+                                    <input name="campusName"onChange={(event) => this.setState({campusEntry: event.target.value})} id="campus-name" value={this.state.campusEntry.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1);})} required/>
+                            </div>
+                            <div className="file-field input-field inline">
+                              <div className="btn">
+                                <span>File</span>
+                                <input id="campus-image" name="file" type="file"/>
+                              </div>
+                              <div className="file-path-wrapper">
+                                <input className="file-path validate" value={this.props.campus.image} type="text"/>
+                              </div>
+                            </div>
+                            <div className="input-field inline">
+                                <button type="submit" className="btn-floating btn-small waves-effect waves-light teal"><i className='material-icons'>check</i></button>
+                            </div>
+                            <div className="input-field inline">
+                                <i onClick={this.props.removeCampus} className="fa fa-times-circle fa-3x icon-delete" aria-hidden="true"></i>
+                            </div>
+                          </form>
                         </div>
+                            </div>
+
+                        </div>
+                            {this.props.currentUser ? this.renderStudents() : null}
                         </div>
                     </div>
                 )
@@ -164,7 +171,8 @@ class SingleCampus extends Component{
 
 const mapStateToProps = (state) => ({
   students: state.students.students,
-  campus: state.campuses.campus
+  campus: state.campuses.campus,
+  currentUser: state.auth.currentUser
 
 })
 

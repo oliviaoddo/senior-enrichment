@@ -7,9 +7,12 @@ import Footer from './Footer';
 import SingleCampus from './SingleCampus';
 import SingleStudent from './SingleStudent';
 import Home from './Home';
+import Login from './Login';
+import Signup from './Signup';
 import store from "../store";
 import { fetchStudents } from '../redux/students'
 import { fetchCampuses } from '../redux/campuses'
+import { retrieveLoggedInUser } from '../redux/auth'
 
 
 
@@ -19,6 +22,7 @@ export default class Main extends Component{
         const campusesThunk = fetchCampuses();
         store.dispatch(studentsThunk);
         store.dispatch(campusesThunk);
+        store.dispatch(retrieveLoggedInUser());
     }
 
     render(){
@@ -32,6 +36,8 @@ export default class Main extends Component{
                             <Route exact path={`/campuses`} component={Campuses} />
                             <Route exact path={`/student/:id`} component={SingleStudent} />
                             <Route exact path={`/campus/:id`} component={SingleCampus} />
+                            <Route exact path={'/login'} component={Login} />
+                            <Route exact path={'/signup'} component={Signup} />
                         </Switch>
                         <Footer />
                     </div>
